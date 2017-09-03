@@ -18,6 +18,7 @@ namespace Fase1_version_1._0
         #region patterns
         string compiler = @"((\s|\t)*(compiler)(\s|\t)*(\w)+(\s|\t)*\.)";
         string units = @"(units)(\s|\t)*(\w*\,\w+)+\.";
+
         string ssets = @"sets";
         string sets1 = @"(\w*)(\s|\t)*\=(\s|\t)*(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
         string sets2 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))+(\'\_\')*\.";
@@ -38,6 +39,8 @@ namespace Fase1_version_1._0
         string comm = @"(comments|comentario)(\s|\t)*(\'|\"")(\W+(\'|\"")(\s|\t)*(to)(\s|\t)*(\'|\"")\W+(\'|\"")(\s|\t)*)(comentario\.)";
 
         string prod = @"((\<\w+\>)(\s|\t)*(\-\>)?)(\s|\t)*((\'\w+\')|(\<\w+\>|\?|(\'(\-|\+)\')|(\w+)|\|))*(\s|\t)*(\{\w+\})*\.";
+        string prod2 = @"((\<\w+\>)(\s|\t)*(\-\>)?)(\s|\t)*(\?)?(\s|\t)*(\{\w+\})\.";
+        string prod3 = @"((\<\w+\>)(\s|\t)*(\-\>)?)(\s|\t)*((\<\w+\>)*(\s|\t))*";
         #endregion
         public void inicio(string texto)
         {
@@ -55,9 +58,9 @@ namespace Fase1_version_1._0
                     return;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                causaerror = "error inesperado";
+                causaerror = "error inesperado " + linea + " " + e.ToString();
             }
         }
 
@@ -68,6 +71,7 @@ namespace Fase1_version_1._0
                 linea++;
                 if (Regex.IsMatch(arreglo[linea].ToLower(), ssets))
                 {
+                    linea++;
                     EstructuraSets();
                 }
             }
@@ -108,7 +112,9 @@ namespace Fase1_version_1._0
 
         void EstructuraTokens()
         {
-            if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1))
+            if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1) | Regex.IsMatch(arreglo[linea].ToLower(), tokens2) | Regex.IsMatch(arreglo[linea].ToLower(), tokens3)
+                | Regex.IsMatch(arreglo[linea].ToLower(), tokens4) | Regex.IsMatch(arreglo[linea].ToLower(), sim1) | Regex.IsMatch(arreglo[linea].ToLower(), sim2)
+                | Regex.IsMatch(arreglo[linea].ToLower(), sim3))
             {
                 linea++;
                 EstructuraTokens();
@@ -126,12 +132,24 @@ namespace Fase1_version_1._0
 
         void EstructuraKeywords()
         {
-
+            if (Regex.IsMatch(arreglo[linea].ToLower(), key1))
+            {
+                linea++;
+                EstructuraKeywords();
+            }
+            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"productions"))
+            {
+                linea++;
+                EstructuraProducctiones();
+            }else
+            {
+                causaerror = "Keywords mal definidas";
+            }
         }
 
         void EstructuraProducctiones()
         {
-
+            //leer linea a linea caracter a caracter
         }
     }
 }
