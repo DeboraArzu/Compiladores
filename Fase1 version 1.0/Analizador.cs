@@ -21,7 +21,7 @@ namespace Fase1_version_1._0
 
         string ssets = @"sets";
         string sets1 = @"(\w*)(\s|\t)*\=(\s|\t)*(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
-        string sets2 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))+(\'\_\')*\.";
+        string sets2 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))+(\'_\')*\.";
         string sets3 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
         string sets4 = @"(\w*)(\s|\t)*\=(\s|\t)*chr\(\d+\)\.\.chr\(\d+\)\.";
 
@@ -60,7 +60,7 @@ namespace Fase1_version_1._0
             }
             catch (Exception e)
             {
-                causaerror = "error inesperado " + linea + " " + e.ToString();
+                causaerror = "error inesperado " + linea + " " + e.ToString() + "\n" + arreglo[linea]; ;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Fase1_version_1._0
             {
                 if (Regex.IsMatch(arreglo[linea].ToLower(), @"units"))
                 {
-                    causaerror = "Units mal definido " + linea;
+                    causaerror = "Units mal definido " + linea + "\n" + arreglo[linea]; ;
                     return;
                 }
                 linea++;
@@ -93,63 +93,67 @@ namespace Fase1_version_1._0
 
         void EstructuraSets()
         {
-            if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
+            while (!Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
+            {
+                if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
                 | Regex.IsMatch(arreglo[linea].ToLower(), sets4))
-            {
-                linea++;
-                EstructuraSets();
+                {
+                    linea++;
+                }
+                else
+                {
+                    causaerror = "Set mal definido " + linea + "\n" + arreglo[linea]; ;
+                    return;
+                }
             }
-            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
-            {
-                EstructuraTokens();
-            }
-            else
-            {
-                causaerror = "Set mal definido " + linea;
-                return;
-            }
+            linea++;
+            EstructuraTokens();
         }
 
         void EstructuraTokens()
         {
-            if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1) | Regex.IsMatch(arreglo[linea].ToLower(), tokens2) | Regex.IsMatch(arreglo[linea].ToLower(), tokens3)
+            while (!Regex.IsMatch(arreglo[linea].ToLower(), @"keywords"))
+            {
+                if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1) | Regex.IsMatch(arreglo[linea].ToLower(), tokens2) | Regex.IsMatch(arreglo[linea].ToLower(), tokens3)
                 | Regex.IsMatch(arreglo[linea].ToLower(), tokens4) | Regex.IsMatch(arreglo[linea].ToLower(), sim1) | Regex.IsMatch(arreglo[linea].ToLower(), sim2)
                 | Regex.IsMatch(arreglo[linea].ToLower(), sim3))
-            {
-                linea++;
-                EstructuraTokens();
+                {
+                    linea++;
+                }
+                else
+                {
+                    causaerror = "Error en Tokens " + linea + "\n" + arreglo[linea];
+                    return;
+                }
             }
-            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"keywords"))
-            {
-                linea++;
-                EstructuraKeywords();
-            }
-            else
-            {
-                causaerror = "Error en Tokens " + linea;
-            }
+            linea++;
+            EstructuraKeywords();
         }
 
         void EstructuraKeywords()
         {
-            if (Regex.IsMatch(arreglo[linea].ToLower(), key1))
+            while (!Regex.IsMatch(arreglo[linea].ToLower(), @"productions"))
             {
-                linea++;
-                EstructuraKeywords();
+                if (Regex.IsMatch(arreglo[linea].ToLower(), key1))
+                {
+                    linea++;
+                    EstructuraKeywords();
+                }
+                else
+                {
+                    causaerror = "Keywords mal definidas " + linea + "\n" + arreglo[linea]; ;
+                    return;
+                }
             }
-            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"productions"))
-            {
-                linea++;
-                EstructuraProducctiones();
-            }else
-            {
-                causaerror = "Keywords mal definidas";
-            }
+            linea++;
+            EstructuraProducctiones();
         }
 
         void EstructuraProducctiones()
         {
             //leer linea a linea caracter a caracter
+            return;
+
         }
     }
 }
