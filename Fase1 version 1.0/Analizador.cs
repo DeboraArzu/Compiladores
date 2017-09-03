@@ -13,6 +13,7 @@ namespace Fase1_version_1._0
         public string causaerror = "";
         string[] arreglo;
         int linea = 0;
+        bool check = false;
         #endregion
         #region patterns
         string compiler = @"((\s|\t)*(compiler)(\s|\t)*(\w)+(\s|\t)*\.)";
@@ -20,8 +21,16 @@ namespace Fase1_version_1._0
         string ssets = @"sets";
         string sets1 = @"(\w*)(\s|\t)*\=(\s|\t)*(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
         string sets2 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))+(\'\_\')*\.";
-        string set3 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
+        string sets3 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
         string sets4 = @"(\w*)(\s|\t)*\=(\s|\t)*chr\(\d+\)\.\.chr\(\d+\)\.";
+
+        string tokens1 = @"\w+(\s|\t)*\=(\s|\t)*\w+(\s|\t)*\.";
+        string tokens2 = @"\w+(\s|\t)*\=(\s|\t)*\w+(\s|\t)*\w*(\*|\+)*\.";
+        string tokens3 = @"\w+(\s|\t)*\=(\s|\t)*\w+(\s|\t)*(\(\w+((\|\w+\))|(\))))(\*|\+)*(\s|\t)*(check)*\.";
+        string tokens4 = @"\w+(\s|\t)*\=((\s|\t)*\w+(\s|\t)*)+\.";
+
+        string sim1 = @"(((\"" |\')(\w+|\+|\*|\=|\<\>|\<|\>|\>\=|\<\=|\-)(\""|\'))(\,)*)+(\s|\t)((Left|Right)\.)*";
+        string sim2 = @"(\'|\"")(\W|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*(left(\s|\t)*\.|right(\s|\t)*.)";
         #endregion
         public void inicio(string texto)
         {
@@ -73,7 +82,37 @@ namespace Fase1_version_1._0
 
         void EstructuraSets()
         {
+            if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
+                | Regex.IsMatch(arreglo[linea].ToLower(), sets4))
+            {
+                linea++;
+                EstructuraSets();
+            }
+            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
+            {
+                EstructuraTokens();
+            }
+            else
+            {
+                causaerror = "Set mal definido " + linea;
+                return;
+            }
+        }
 
+        void EstructuraTokens()
+        {
+            if (true)
+            {
+
+            }
+            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"keywords"))
+            {
+
+            }
+            else
+            {
+                causaerror = "Error en Tokens " + linea;
+            }
         }
     }
 }
