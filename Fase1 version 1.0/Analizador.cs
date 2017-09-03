@@ -31,6 +31,13 @@ namespace Fase1_version_1._0
 
         string sim1 = @"(((\"" |\')(\w+|\+|\*|\=|\<\>|\<|\>|\>\=|\<\=|\-)(\""|\'))(\,)*)+(\s|\t)((Left|Right)\.)*";
         string sim2 = @"(\'|\"")(\W|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*(left(\s|\t)*\.|right(\s|\t)*.)";
+        string sim3 = @"((\'|\"")(\=|\<|\>|\,|\*|\+|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\=|\<|\>|\,|\*|\+|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*)(left(\s|\t)*\.|right(\s|\t)*\.)";
+
+        string key1 = @"((\'|\"")\w+(\'|\""))(\,|\.)";
+
+        string comm = @"(comments|comentario)(\s|\t)*(\'|\"")(\W+(\'|\"")(\s|\t)*(to)(\s|\t)*(\'|\"")\W+(\'|\"")(\s|\t)*)(comentario\.)";
+
+        string prod = @"((\<\w+\>)(\s|\t)*(\-\>)?)(\s|\t)*((\'\w+\')|(\<\w+\>|\?|(\'(\-|\+)\')|(\w+)|\|))*(\s|\t)*(\{\w+\})*\.";
         #endregion
         public void inicio(string texto)
         {
@@ -101,18 +108,30 @@ namespace Fase1_version_1._0
 
         void EstructuraTokens()
         {
-            if (true)
+            if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1))
             {
-
+                linea++;
+                EstructuraTokens();
             }
             else if (Regex.IsMatch(arreglo[linea].ToLower(), @"keywords"))
             {
-
+                linea++;
+                EstructuraKeywords();
             }
             else
             {
                 causaerror = "Error en Tokens " + linea;
             }
+        }
+
+        void EstructuraKeywords()
+        {
+
+        }
+
+        void EstructuraProducctiones()
+        {
+
         }
     }
 }
