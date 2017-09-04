@@ -19,10 +19,11 @@ namespace Fase1_version_1._0
         }
         //variables globales
         string causaerror, texto, ruta = "";
-        Analizador analize = new Analizador();
+        Analizador analize;
 
         private void btanalizar_Click(object sender, EventArgs e)
         {
+            analize = new Analizador();
             if (TextoArchivo.Text != "")
             {
                 TextoArchivo.SelectAll();
