@@ -205,26 +205,26 @@ namespace Fase1_version_1._0
             {
                 if (!Regex.IsMatch(arreglo[linea], @"end."))
                 {
-                    if (Regex.IsMatch(arreglo[linea].ToLower(), prod) | Regex.IsMatch(arreglo[linea].ToLower(), prod2) | Regex.IsMatch(arreglo[linea].ToLower(), prod3))
+                    if ((Regex.IsMatch(arreglo[linea].ToLower(), prod) | Regex.IsMatch(arreglo[linea].ToLower(), prod2)
+                        | Regex.IsMatch(arreglo[linea].ToLower(), prod3) | Regex.IsMatch(arreglo[linea].ToLower(), @"\|(\s|\t)*(\?)(\.)")) && AnalisisProduction())
                     {
-                        if (Regex.IsMatch(arreglo[linea], @"\|"))
-                        {
-
-                        }
+                        punto = false;
                         linea++;
                     }
                     else
                     {
                         if (!AnalisisProduction())
                         {
+                            causaerror = "Produccion mal definida " + linea + "\n" + arreglo[linea];
                             return;
                         }
-                        return;
+                        linea++;
                     }
                 }
                 else
                 {
                     end = true;
+                    return;
                 }
             }
             if (end == false)
@@ -315,7 +315,6 @@ namespace Fase1_version_1._0
             string line = arreglo[linea];
             char[] cline = line.ToCharArray();
             comilla = 0; parentesis = 0; corchete = 0; comillas = 0; lesser = 0;
-            punto = false;
             #region forech
             foreach (char item in cline)
             {
@@ -378,18 +377,114 @@ namespace Fase1_version_1._0
                 causaerror = "falta o sobra un corchete " + linea + "\n" + arreglo[linea];
                 return false;
             }
-            if (lesser % 2 != 0)
+            if (Regex.IsMatch(arreglo[linea].ToLower(), @"(\<\w+\>)(\s|\t)*(\-\>)"))
             {
-                causaerror = "falta o sobra un signo < ó > " + linea + "\n" + arreglo[linea];
-                return false;
+                if ((lesser - 1) % 2 != 0)
+                {
+                    causaerror = "falta o sobra un signo < ó > " + linea + "\n" + arreglo[linea];
+                    return false;
+                }
+            }
+            else
+            {
+                if ((lesser) % 2 != 0)
+                {
+                    causaerror = "falta o sobra un signo < ó > " + linea + "\n" + arreglo[linea];
+                    return false;
+                }
             }
             if (parentesis % 2 != 0)
             {
                 causaerror = "falta parentesis";
                 return false;
             }
-            linea++;
+            if (Regex.IsMatch(arreglo[linea+1].ToLower(), @"(\<\w+\>)(\s|\t)*(\-\>)") && punto == false)
+            {
+                causaerror = "Falta punto al final de la produccion";
+                return false;
+            }
             return true;
+        }
+
+        void AProduction()
+        {
+            string line = arreglo[linea];
+            char[] cline = line.ToCharArray();
+            comilla = 0; parentesis = 0; corchete = 0; comillas = 0; lesser = 0;
+            #region forech
+            foreach (char item in cline)
+            {
+                switch (item)
+                {
+                    case '+':
+                        break;
+                    case '-':
+                        break;
+                    case '*':
+                        break;
+                    case '<':
+                        lesser++;
+                        break;
+                    case '>':
+                        lesser++;
+                        break;
+                    case '{':
+                        corchete++;
+                        break;
+                    case '}':
+                        corchete++;
+                        break;
+                    case '=':
+                        break;
+                    case '\'':
+                        comillas++;
+                        break;
+                    case '"':
+                        comilla++;
+                        break;
+                    case ',':
+                        break;
+                    case ' ':
+                        break;
+                    case '.':
+                        punto = true;
+                        break;
+                    case '?':
+                        break;
+                    default:
+                        //puede ser una letra
+
+                        if (Char.IsLetter(item))
+                        {
+                            //do something
+                        }
+                        break;
+                }
+            }
+            #endregion
+            //(\<\w+\>)(\s|\t)*(\-\>)
+            if (comilla % 2 != 0 | comillas % 2 != 0)
+            {
+                causaerror = "falta o sobra una comilla " + linea + "\n" + arreglo[linea];
+                return;
+            }
+            if (corchete % 2 != 0)
+            {
+                causaerror = "falta o sobra un corchete " + linea + "\n" + arreglo[linea];
+                return;
+            }
+            if (lesser % 2 != 0)
+            {
+                causaerror = "falta o sobra un signo < ó > " + linea + "\n" + arreglo[linea];
+                return;
+            }
+            if (parentesis % 2 != 0)
+            {
+                causaerror = "falta parentesis";
+                return;
+            }
+            linea++;
+            return;
         }
 
         bool AnalisisKeywords()
