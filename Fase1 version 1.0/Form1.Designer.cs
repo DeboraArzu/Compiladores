@@ -29,31 +29,21 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.TextoArchivo = new System.Windows.Forms.TextBox();
             this.textoerror = new System.Windows.Forms.TextBox();
             this.btanalizar = new System.Windows.Forms.Button();
             this.btsalir = new System.Windows.Forms.Button();
             this.btExaminar = new System.Windows.Forms.Button();
+            this.TextoArchivo = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
-            // 
-            // TextoArchivo
-            // 
-            this.TextoArchivo.Location = new System.Drawing.Point(12, 108);
-            this.TextoArchivo.Multiline = true;
-            this.TextoArchivo.Name = "TextoArchivo";
-            this.TextoArchivo.ReadOnly = true;
-            this.TextoArchivo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.TextoArchivo.Size = new System.Drawing.Size(399, 370);
-            this.TextoArchivo.TabIndex = 1;
             // 
             // textoerror
             // 
-            this.textoerror.Location = new System.Drawing.Point(527, 108);
+            this.textoerror.Location = new System.Drawing.Point(604, 108);
             this.textoerror.Multiline = true;
             this.textoerror.Name = "textoerror";
             this.textoerror.ReadOnly = true;
             this.textoerror.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textoerror.Size = new System.Drawing.Size(399, 370);
+            this.textoerror.Size = new System.Drawing.Size(363, 163);
             this.textoerror.TabIndex = 2;
             // 
             // btanalizar
@@ -92,16 +82,24 @@
             this.btExaminar.UseVisualStyleBackColor = true;
             this.btExaminar.Click += new System.EventHandler(this.btExaminar_Click);
             // 
+            // TextoArchivo
+            // 
+            this.TextoArchivo.Location = new System.Drawing.Point(12, 108);
+            this.TextoArchivo.Name = "TextoArchivo";
+            this.TextoArchivo.Size = new System.Drawing.Size(512, 368);
+            this.TextoArchivo.TabIndex = 5;
+            this.TextoArchivo.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.ClientSize = new System.Drawing.Size(995, 511);
+            this.Controls.Add(this.TextoArchivo);
             this.Controls.Add(this.btsalir);
             this.Controls.Add(this.btanalizar);
             this.Controls.Add(this.textoerror);
-            this.Controls.Add(this.TextoArchivo);
             this.Controls.Add(this.btExaminar);
             this.Font = new System.Drawing.Font("Arial Narrow", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -114,11 +112,11 @@
         }
 
         #endregion
-        private System.Windows.Forms.TextBox TextoArchivo;
         private System.Windows.Forms.TextBox textoerror;
         private System.Windows.Forms.Button btanalizar;
         private System.Windows.Forms.Button btsalir;
         private System.Windows.Forms.Button btExaminar;
+        private System.Windows.Forms.RichTextBox TextoArchivo;
     }
 }
 

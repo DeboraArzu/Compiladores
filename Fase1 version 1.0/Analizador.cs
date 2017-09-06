@@ -13,7 +13,7 @@ namespace Fase1_version_1._0
         public string causaerror = "";
         string[] arreglo;
         int linea = 0;
-        bool check, punto = false;
+        bool check, punto, end = false;
         int comilla, parentesis, corchete, comillas, lesser = 0;
         #endregion
 
@@ -26,11 +26,13 @@ namespace Fase1_version_1._0
         string sets2 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))+(\'_\')*\.";
         string sets3 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
         string sets4 = @"(\w*)(\s|\t)*\=(\s|\t)*chr\(\d+\)\.\.chr\(\d+\)\.";
+        string set5 = @"(\w+)(\s|\t)*(\=(\s|\t)*)(((\'|\"")(\w|\d)(\'|\""))|(chr))";
 
         string tokens1 = @"\w+(\s|\t)*\=(\s|\t)*\w+(\s|\t)*\.";
         string tokens2 = @"\w+(\s|\t)*\=(\s|\t)*\w+(\s|\t)*\w*(\*|\+)*\.";
         string tokens3 = @"\w+(\s|\t)*\=(\s|\t)*\w+(\s|\t)*(\(\w+((\|\w+\))|(\))))(\*|\+)*(\s|\t)*(check)*\.";
         string tokens4 = @"\w+(\s|\t)*\=((\s|\t)*\w+(\s|\t)*)+\.";
+        string token5 = @"(\w+(\s|\t)*(\=)(\s|\t)*)(?=\w+)(?!chr)|(((\'|\"")(?!\+)(\W)(\'|\"")))";
 
         string sim1 = @"(((\"" |\')(\w+|\+|\*|\=|\<\>|\<|\>|\>\=|\<\=|\-)(\""|\'))(\,)*)+(\s|\t)((Left|Right)\.)*";
         string sim2 = @"(\'|\"")(\W|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*(left(\s|\t)*\.|right(\s|\t)*.)";
@@ -77,27 +79,39 @@ namespace Fase1_version_1._0
 
         void Cuerpo()
         {
-            if (Regex.IsMatch(arreglo[linea].ToLower(), units))
+            //ver si viene definido units
+            if (Regex.IsMatch(arreglo[linea].ToLower(), @"units")) //la palabra units es encontrada
             {
-                linea++;
-                if (Regex.IsMatch(arreglo[linea].ToLower(), ssets))
+                if (!Regex.IsMatch(arreglo[linea].ToLower(), units)) //verifica que esten bien escritas
+                {
+                    causaerror = "Units mal definidas" + linea + "\n" + arreglo[linea];
+                    return;
+                }
+                else
                 {
                     linea++;
-                    EstructuraSets();
+                    if (Regex.IsMatch(arreglo[linea].ToLower(), @"sets"))
+                    {
+                        linea++;
+                        EstructuraSets();
+                    }
+                    else if (Regex.IsMatch(arreglo[linea].ToLower(), set5))
+                    {
+                        causaerror = "Palabra set no definida " + linea;
+                    }
                 }
+            }
+            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"sets"))
+            {
+                linea++;
+                EstructuraSets();
             }
             else
             {
-                if (Regex.IsMatch(arreglo[linea].ToLower(), @"units"))
+                if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
+               | Regex.IsMatch(arreglo[linea].ToLower(), sets4))
                 {
-                    causaerror = "Units mal definido " + linea + "\n" + arreglo[linea]; ;
-                    return;
-                }
-                linea++;
-                if (Regex.IsMatch(arreglo[linea].ToLower(), ssets))
-                {
-                    linea++;
-                    EstructuraSets();
+                    causaerror = "La palabra sets no fue encontrada " + linea + "\n" + arreglo[linea];
                 }
             }
         }
@@ -106,6 +120,7 @@ namespace Fase1_version_1._0
         {
             while (!Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
             {
+
                 if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
                 | Regex.IsMatch(arreglo[linea].ToLower(), sets4))
                 {
@@ -113,12 +128,30 @@ namespace Fase1_version_1._0
                 }
                 else
                 {
-                    causaerror = "Set mal definido " + linea + "\n" + arreglo[linea]; ;
-                    return;
+                    if (!validarpalabratoken())
+                    {
+                        causaerror = "Set mal definido " + linea + "\n" + arreglo[linea]; ;
+                        return;
+                    }
+                    if (causaerror != "")
+                    {
+                        return;
+                    }
+
                 }
             }
             linea++;
             EstructuraTokens();
+        }
+
+        bool validarpalabratoken()
+        {
+            if (Regex.IsMatch(arreglo[linea], token5))
+            {
+                causaerror = "Palabra token no definida " + linea + "\n" + arreglo[linea];
+                return true;
+            }
+            return false;
         }
 
         void EstructuraTokens()
@@ -149,11 +182,16 @@ namespace Fase1_version_1._0
             {
                 if (Regex.IsMatch(arreglo[linea].ToLower(), key1) | Regex.IsMatch(arreglo[linea], comm))
                 {
+                    if (!AnalisisKeywords())
+                    {
+                        causaerror = "Keywords mal definidas " + linea + "\n" + arreglo[linea];
+                        return;
+                    }
                     linea++;
                 }
                 else
                 {
-                    causaerror = "Keywords mal definidas " + linea + "\n" + arreglo[linea]; ;
+                    causaerror = "Keywords mal definidas " + linea + "\n" + arreglo[linea];
                     return;
                 }
             }
@@ -165,15 +203,18 @@ namespace Fase1_version_1._0
         {
             while (linea < arreglo.Count())
             {
-                if (!Regex.IsMatch(arreglo[linea], @"end"))
+                if (!Regex.IsMatch(arreglo[linea], @"end."))
                 {
-                    if (Regex.IsMatch(arreglo[linea], prod) | Regex.IsMatch(arreglo[linea], prod2) | Regex.IsMatch(arreglo[linea], prod3))
+                    if (Regex.IsMatch(arreglo[linea].ToLower(), prod) | Regex.IsMatch(arreglo[linea].ToLower(), prod2) | Regex.IsMatch(arreglo[linea].ToLower(), prod3))
                     {
+                        if (Regex.IsMatch(arreglo[linea], @"\|"))
+                        {
+
+                        }
                         linea++;
                     }
                     else
                     {
-                        //do something
                         if (!AnalisisProduction())
                         {
                             return;
@@ -181,6 +222,15 @@ namespace Fase1_version_1._0
                         return;
                     }
                 }
+                else
+                {
+                    end = true;
+                }
+            }
+            if (end == false)
+            {
+                causaerror = "Falta End. Al final del archivo";
+                return;
             }
             return;
         }
@@ -190,6 +240,7 @@ namespace Fase1_version_1._0
             string line = arreglo[linea];
             char[] cline = line.ToCharArray();
             comilla = 0; parentesis = 0; corchete = 0; comillas = 0;
+            punto = false;
             foreach (char item in cline)
             {
                 switch (item)
@@ -264,6 +315,8 @@ namespace Fase1_version_1._0
             string line = arreglo[linea];
             char[] cline = line.ToCharArray();
             comilla = 0; parentesis = 0; corchete = 0; comillas = 0; lesser = 0;
+            punto = false;
+            #region forech
             foreach (char item in cline)
             {
                 switch (item)
@@ -312,8 +365,9 @@ namespace Fase1_version_1._0
                         }
                         break;
                 }
-
             }
+            #endregion
+            //(\<\w+\>)(\s|\t)*(\-\>)
             if (comilla % 2 != 0 | comillas % 2 != 0)
             {
                 causaerror = "falta o sobra una comilla " + linea + "\n" + arreglo[linea];
@@ -335,6 +389,38 @@ namespace Fase1_version_1._0
                 return false;
             }
             linea++;
+            return true;
+        }
+
+        bool AnalisisKeywords()
+        {
+            string line = arreglo[linea];
+            char[] cline = line.ToCharArray();
+            comilla = 0; parentesis = 0; corchete = 0; comillas = 0; lesser = 0;
+            foreach (char item in cline)
+            {
+                switch (item)
+                {
+                    case '"':
+                        comilla++;
+                        break;
+                    case '\'':
+                        comillas++;
+                        break;
+                    default:
+                        //puede ser una letra
+                        if (Char.IsLetter(item))
+                        {
+                            //concatenar y guardar
+                        }
+                        break;
+                }
+
+            }
+            if (comilla % 2 != 0 | comillas % 2 != 0)
+            {
+                return false;
+            }
             return true;
         }
     }
