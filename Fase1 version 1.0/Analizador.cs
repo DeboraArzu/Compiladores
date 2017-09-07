@@ -13,7 +13,7 @@ namespace Fase1_version_1._0
         public string causaerror, palabra = "";
         string[] arreglo;
         int linea = 0;
-        bool check, punto, end = false;
+        bool check, punto, end, tokens, produccion, start = false;
         int comilla, parentesis, corchete, comillas, lesser = 0;
         #endregion
 
@@ -52,6 +52,8 @@ namespace Fase1_version_1._0
             linea = 0;
             punto = false;
             check = false;
+            end = false;
+            start = false;
             comilla = 0; parentesis = 0; corchete = 0; comillas = 0; lesser = 0;
         }
         public void inicio(string texto)
@@ -59,6 +61,7 @@ namespace Fase1_version_1._0
             try
             {
                 arreglo = texto.Split(new Char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
                 if (Regex.IsMatch(arreglo[linea].ToLower(), compiler))
                 {
                     linea++;
@@ -69,6 +72,7 @@ namespace Fase1_version_1._0
                     causaerror = "Compiler no definido correctamente o no definido " + arreglo[linea];
                     return;
                 }
+
             }
             catch (Exception e)
             {
@@ -128,7 +132,6 @@ namespace Fase1_version_1._0
         {
             while (!Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
             {
-
                 if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
                 | Regex.IsMatch(arreglo[linea].ToLower(), sets4))
                 {
@@ -224,8 +227,13 @@ namespace Fase1_version_1._0
                     if ((Regex.IsMatch(arreglo[linea].ToLower(), prod) | Regex.IsMatch(arreglo[linea].ToLower(), prod2)
                         | Regex.IsMatch(arreglo[linea].ToLower(), prod3) | Regex.IsMatch(arreglo[linea].ToLower(), @"\|(\s|\t)*(\?)(\.)")) && AnalisisProduction())
                     {
+
                         punto = false;
                         linea++;
+                        if (Regex.IsMatch(arreglo[linea].ToLower(), @"(start)(\s|\t)*\=(\s|\t)*(\<\w+\>(\s|\t)*.)"))
+                        {
+                            start = true;
+                        }
                     }
                     else
                     {
@@ -240,6 +248,11 @@ namespace Fase1_version_1._0
                 else
                 {
                     end = true;
+                    if (start != true)
+                    {
+                        causaerror = "Falta produccion start";
+                        return;
+                    }
                     return;
                 }
             }
@@ -429,6 +442,10 @@ namespace Fase1_version_1._0
                 causaerror = "Falta punto al final de la produccion";
                 return false;
             }
+            if (Regex.IsMatch(arreglo[linea].ToLower(), @"(start)(\s|\t)*\=(\s|\t)*(\<\w+\>(\s|\t)*.)"))
+            {
+                start = true;
+            }
             return true;
         }
 
@@ -449,6 +466,11 @@ namespace Fase1_version_1._0
                     case '*':
                         break;
                     case '<':
+                        if (!Regex.IsMatch(arreglo[linea], @"\<[^\d]\w +\>"))
+                        {
+                            causaerror = "Error de ID " + linea + "\n" + arreglo[linea]; ;
+                            return;
+                        }
                         lesser++;
                         break;
                     case '>':
@@ -509,6 +531,7 @@ namespace Fase1_version_1._0
                 causaerror = "falta parentesis";
                 return;
             }
+
             linea++;
             return;
         }
