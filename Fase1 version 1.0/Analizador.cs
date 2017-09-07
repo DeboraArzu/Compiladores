@@ -18,10 +18,9 @@ namespace Fase1_version_1._0
         #endregion
 
         #region patterns
-        string compiler = @"((\s|\t)*(compiler)(\s|\t)*(\w)+(\s|\t)*\.)";
+        string compiler = @"((\s|\t)*(compiler)(\s|\t)*(?!compiler)(\w)+(\s|\t)*\.)";
         string units = @"(units)(\s|\t)*(\w*\,\w+)+\.";
 
-        string ssets = @"sets";
         string sets1 = @"(\w*)(\s|\t)*\=(\s|\t)*(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
         string sets2 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))+(\'_\')*\.";
         string sets3 = @"(\w*)(\s|\t)*\=(\s|\t)*((\'(\w|\d)\')\.\.(\'(\w|\d)\')(\+))(\'(\w|\d)\')\.\.(\'(\w|\d)\')\.";
@@ -76,7 +75,6 @@ namespace Fase1_version_1._0
                 causaerror = "error inesperado " + linea + " " + e.ToString() + "\n" + arreglo[linea]; ;
             }
         }
-
         void Cuerpo()
         {
             //ver si viene definido units
@@ -98,6 +96,7 @@ namespace Fase1_version_1._0
                     else if (Regex.IsMatch(arreglo[linea].ToLower(), set5))
                     {
                         causaerror = "Palabra set no definida " + linea;
+                        return;
                     }
                 }
             }
@@ -108,14 +107,23 @@ namespace Fase1_version_1._0
             }
             else
             {
+                if (Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
+                {
+                    linea++;
+                    EstructuraTokens();
+                }
                 if (Regex.IsMatch(arreglo[linea].ToLower(), sets1) | Regex.IsMatch(arreglo[linea].ToLower(), sets2) | Regex.IsMatch(arreglo[linea].ToLower(), sets3)
                | Regex.IsMatch(arreglo[linea].ToLower(), sets4))
                 {
                     causaerror = "La palabra sets no fue encontrada " + linea + "\n" + arreglo[linea];
+                    return;
+                }
+                else if(validarpalabratoken())
+                {
+                    return;
                 }
             }
         }
-
         void EstructuraSets()
         {
             while (!Regex.IsMatch(arreglo[linea].ToLower(), @"tokens"))
@@ -156,7 +164,8 @@ namespace Fase1_version_1._0
 
         void EstructuraTokens()
         {
-            while (!Regex.IsMatch(arreglo[linea].ToLower(), @"keywords"))
+            while (!Regex.IsMatch(arreglo[linea].ToLower(), @"keywords") & !Regex.IsMatch(arreglo[linea].ToLower(), @"productions") &
+                !Regex.IsMatch(arreglo[linea].ToLower(), @"coments"))
             {
                 if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1) | Regex.IsMatch(arreglo[linea].ToLower(), tokens2) | Regex.IsMatch(arreglo[linea].ToLower(), tokens3)
                 | Regex.IsMatch(arreglo[linea].ToLower(), tokens4) | Regex.IsMatch(arreglo[linea].ToLower(), sim1) | Regex.IsMatch(arreglo[linea].ToLower(), sim2)
@@ -172,8 +181,16 @@ namespace Fase1_version_1._0
                     }
                 }
             }
-            linea++;
-            EstructuraKeywords();
+            if (Regex.IsMatch(arreglo[linea].ToLower(), @"keywords"))
+            {
+                linea++;
+                EstructuraKeywords();
+            }
+            else if (Regex.IsMatch(arreglo[linea].ToLower(), @"productions"))
+            {
+                linea++;
+                EstructuraProducctiones();
+            }
         }
 
         void EstructuraKeywords()
@@ -201,9 +218,9 @@ namespace Fase1_version_1._0
 
         void EstructuraProducctiones()
         {
-            while (linea < arreglo.Count())
+            while (linea < (arreglo.Count()))
             {
-                if (!Regex.IsMatch(arreglo[linea], @"end."))
+                if (!Regex.IsMatch(arreglo[linea], @"end"))
                 {
                     if ((Regex.IsMatch(arreglo[linea].ToLower(), prod) | Regex.IsMatch(arreglo[linea].ToLower(), prod2)
                         | Regex.IsMatch(arreglo[linea].ToLower(), prod3) | Regex.IsMatch(arreglo[linea].ToLower(), @"\|(\s|\t)*(\?)(\.)")) && AnalisisProduction())
@@ -398,7 +415,7 @@ namespace Fase1_version_1._0
                 causaerror = "falta parentesis";
                 return false;
             }
-            if (Regex.IsMatch(arreglo[linea+1].ToLower(), @"(\<\w+\>)(\s|\t)*(\-\>)") && punto == false)
+            if (Regex.IsMatch(arreglo[linea + 1].ToLower(), @"(\<\w+\>)(\s|\t)*(\-\>)") && punto == false)
             {
                 causaerror = "Falta punto al final de la produccion";
                 return false;
