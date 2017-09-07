@@ -168,8 +168,7 @@ namespace Fase1_version_1._0
                 !Regex.IsMatch(arreglo[linea].ToLower(), @"coments"))
             {
                 if (Regex.IsMatch(arreglo[linea].ToLower(), tokens1) | Regex.IsMatch(arreglo[linea].ToLower(), tokens2) | Regex.IsMatch(arreglo[linea].ToLower(), tokens3)
-                | Regex.IsMatch(arreglo[linea].ToLower(), tokens4) | Regex.IsMatch(arreglo[linea].ToLower(), sim1) | Regex.IsMatch(arreglo[linea].ToLower(), sim2)
-                | Regex.IsMatch(arreglo[linea].ToLower(), sim3))
+                | Regex.IsMatch(arreglo[linea].ToLower(), tokens4))
                 {
                     linea++;
                 }
