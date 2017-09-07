@@ -552,9 +552,10 @@ namespace Fase1_version_1._0
             int val = 0;
             foreach (Match match in Regex.Matches(sentence, pattern, RegexOptions.IgnoreCase))
             {
-               // Console.WriteLine("Found '{0}' at position {1}", match.Value, match.Index);
-                // causaerror = "error " + linea + "\n" + arreglo[linea];
-                //return;
+                val++;
+            }
+            foreach (Match match in Regex.Matches(sentence, @"[^left|right][^a-z]\.", RegexOptions.IgnoreCase))
+            {
                 val++;
             }
             if (val == 0)
