@@ -10,7 +10,7 @@ namespace Fase1_version_1._0
     class Analizador
     {
         #region variables
-        public string causaerror = "";
+        public string causaerror, palabra = "";
         string[] arreglo;
         int linea = 0;
         bool check, punto, end = false;
@@ -33,9 +33,9 @@ namespace Fase1_version_1._0
         string tokens4 = @"\w+(\s|\t)*\=((\s|\t)*\w+(\s|\t)*)+\.";
         string token5 = @"(\w+(\s|\t)*(\=)(\s|\t)*)(?=\w+)(?!chr)|(((\'|\"")(?!\+)(\W)(\'|\"")))";
 
-        string sim1 = @"(((\"" |\')(\w+|\+|\*|\=|\<\>|\<|\>|\>\=|\<\=|\-)(\""|\'))(\,)*)+(\s|\t)((Left|Right)\.)*";
-        string sim2 = @"(\'|\"")(\W|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*(left(\s|\t)*\.|right(\s|\t)*.)";
-        string sim3 = @"((\'|\"")(\=|\<|\>|\,|\*|\+|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\=|\<|\>|\,|\*|\+|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*)(left(\s|\t)*\.|right(\s|\t)*\.)";
+        string sim1 = @"(((\"" |\')(\w+|\+|\*|\=|\<\>|\<|\>|\>\=|\<\=|\-)(\""|\'))(\,)*)+(\s|\t)((left|right)(?!\w)\.)*";
+        string sim2 = @"(\'|\"")(\W|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*(left(?!\w)(\s|\t)*\.|right(?!\w)(\s|\t)*.)";
+        string sim3 = @"((\'|\"")(\=|\<|\>|\,|\*|\+|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\"")(\,(\'|\"")(\=|\<|\>|\,|\*|\+|\<\>|\<\=|\>\=|and|mod|div|not)(\'|\""))*(\,)*(\s|\t)*)(left(?!\w)(\s|\t)*\.|right(?!\w)(\s|\t)*\.)";
 
         string key1 = @"((\'|\"")\w+(\'|\""))(\,|\.)";
 
@@ -118,7 +118,7 @@ namespace Fase1_version_1._0
                     causaerror = "La palabra sets no fue encontrada " + linea + "\n" + arreglo[linea];
                     return;
                 }
-                else if(validarpalabratoken())
+                else if (validarpalabratoken())
                 {
                     return;
                 }
@@ -258,6 +258,7 @@ namespace Fase1_version_1._0
             char[] cline = line.ToCharArray();
             comilla = 0; parentesis = 0; corchete = 0; comillas = 0;
             punto = false;
+            #region MyRegion
             foreach (char item in cline)
             {
                 switch (item)
@@ -293,17 +294,21 @@ namespace Fase1_version_1._0
                     case '.':
                         punto = true;
                         break;
+                    case 't':
+                        Direccional();
+                        break;
                     default:
                         //puede ser una letra
 
                         if (Char.IsLetter(item))
                         {
-                            //do something
+                            palabra += item;
                         }
                         break;
                 }
-
             }
+            #endregion
+
             if (comilla % 2 != 0)
             {
                 causaerror = "falta o sobra una comilla " + linea + "\n" + arreglo[linea];
@@ -534,6 +539,25 @@ namespace Fase1_version_1._0
                 return false;
             }
             return true;
+        }
+
+        void Direccional()
+        {
+            string sentence = arreglo[linea];
+            string pattern = @"(left|right)(?!\w)\.";
+            int val = 0;
+            foreach (Match match in Regex.Matches(sentence, pattern, RegexOptions.IgnoreCase))
+            {
+               // Console.WriteLine("Found '{0}' at position {1}", match.Value, match.Index);
+                // causaerror = "error " + linea + "\n" + arreglo[linea];
+                //return;
+                val++;
+            }
+            if (val == 0)
+            {
+                causaerror = "error linea " + linea + "\n" + sentence;
+                return;
+            }
         }
     }
 }
