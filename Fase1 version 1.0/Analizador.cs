@@ -264,14 +264,19 @@ namespace Fase1_version_1._0
                 switch (item)
                 {
                     case '+':
+                        Direccional();
                         break;
                     case '-':
+                        Direccional();
                         break;
                     case '*':
+                        Direccional();
                         break;
                     case '<':
+                        Direccional();
                         break;
                     case '>':
+                        Direccional();
                         break;
                     case '=':
                         break;
